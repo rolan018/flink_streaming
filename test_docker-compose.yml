@@ -1,0 +1,50 @@
+version: '2.1'
+
+services: 
+
+  db: 
+    image: postgres:9.6.1
+    container_name: postgres 
+    command: postgres -c logging_collector=on -c log_destination=csvlog -c log_directory=/home/alan/test_flink/postgres_1/logs -c log_file_mode=0777 -c log_statement=all
+    environment: 
+      POSTGRES_PASSWORD: admin
+      POSTGRES_USER: rolan
+      POSTGRES_DB: db01
+    volumes:
+      - ./logs:/home/alan/test_flink/postgres_1/logs 
+    ports:
+      - "0066:5432"
+
+  jobmanager:
+    image: flink:1.16.0
+    ports:
+      - "8081:8081"
+    command: jobmanager
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: jobmanager        
+
+  taskmanager:
+    image: flink:1.16.0
+    depends_on:
+      - jobmanager
+    command: taskmanager
+    scale: 1
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: jobmanager
+        taskmanager.numberOfTaskSlots: 2
+
+  sql-client:
+    image: flink:1.16.0
+    command: bin/sql-client.sh
+    depends_on:
+      - jobmanager
+      - db
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: jobmanager
+        rest.address: jobmanager  

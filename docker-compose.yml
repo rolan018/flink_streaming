@@ -1,0 +1,22 @@
+version: '2.1'
+
+services: 
+
+  postgres_input: 
+    image: debezium/postgres:13
+    environment: 
+      POSTGRES_PASSWORD: admin
+      POSTGRES_USER: rolan
+      POSTGRES_DB: db01
+    ports:
+      - "5432:5432"
+
+  mysql:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db02
+      MYSQL_USER: rolan
+      MYSQL_PASSWORD: admin
