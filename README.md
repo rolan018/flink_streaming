@@ -5,8 +5,18 @@ Step by step launch of the pipeline
 ```bash
 docker compose up -d --build
 ```
-## 2) Checking the id of the container
 
+## 2) Create table in POSTRES and start generate data
+```bash
+python3 /load_data/main.py
+```
+
+## 2) Create table in MySQL. Execute commands from Script.sql with #Create table mysql
+```bash
+python3 /load_data/main.py
+```
+
+## 3) Checking the id of the container
 ```bash
 docker ps
 ```
@@ -18,17 +28,67 @@ b34debb3ef65   flink:1.16.0            "/docker-entrypoint.…"   5 minutes ago 
 a81d1ea85631   mysql:8.0               "docker-entrypoint.s…"   5 minutes ago   Up 5 minutes   0.0.0.0:3306->3306/tcp, :::3306->3306/tcp, 33060/tcp   test_flink-mysql-1
 cc500855d225   debezium/postgres:13    "docker-entrypoint.s…"   5 minutes ago   Up 5 minutes   0.0.0.0:5432->5432/tcp, :::5432->5432/tcp              test_flink-postgres_input-1
 ```
-## 3) Entering the container with bash
 
+## 4) Entering the container with bash
 ```bash
 docker exec -it <id_sql_client> /bin/bash
 ```
-## 4) If necessary, we give the right to launch the sql-client
+
+## 5) If necessary, we give the right to launch the sql-client
 ```bash
 chmod u+x ./sql-client.sh
 ```
-## 5) Start sql-client
+
+## 6) Start sql-client
 ```bash
 ./sql-client.sh
 ```
-## 6) Execute commands in Script.sql with #FlinkSQL
+
+## 7) Execute commands from Script.sql with #FlinkSQL
+```bash
+set execution.checkpointing.interval=3s;
+```
+```bash
+CREATE TABLE users (
+    id INT, 
+    name STRING, 
+    nick_name STRING, 
+    salary INT,
+    PRIMARY KEY (id) NOT ENFORCED
+) WITH (
+   'connector' = 'postgres-cdc',
+   'hostname' = 'localhost',
+   'port' = '5432',
+   'username' = '*****',
+   'password' = '*****',
+   'database-name' = 'db01',
+   'schema-name' = 'public',
+   'table-name' = 'users'
+ );
+```
+```bash
+CREATE TABLE usersnotsalary (
+    id INT, 
+    name STRING, 
+    nick_name STRING,
+    salary INT,
+    PRIMARY KEY (id) NOT ENFORCED
+) WITH (
+   'connector' = 'jdbc',
+   'url' = 'jdbc:mysql://localhost:3306/db02',
+   'table-name' = 'users',
+   'username'='*****',
+   'password'='*****'
+ );
+```
+
+```bash
+INSERT INTO usersnotsalary
+SELECT o.id, o.name, o.nick_name, o.salary + 1000
+FROM users AS o;
+```
+## 8) Select in MySQL. Execute commands from Script.sql with #MySql. 
+# Watch and enjoy
+```bash
+select * from users;
+```
