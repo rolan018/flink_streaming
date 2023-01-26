@@ -1,11 +1,11 @@
-## Streaming data from Postres to MySql using Flink
+# Streaming data from Postres to MySql using Flink
 Step by step launch of the pipeline
-# 1) Creating a docker container with databases and Flink
+## 1) Creating a docker container with databases and Flink
 
 ```bash
 docker compose up -d --build
 ```
-# 2) Checking the id of the container
+## 2) Checking the id of the container
 
 ```bash
 docker ps
@@ -18,17 +18,17 @@ b34debb3ef65   flink:1.16.0            "/docker-entrypoint.…"   5 minutes ago 
 a81d1ea85631   mysql:8.0               "docker-entrypoint.s…"   5 minutes ago   Up 5 minutes   0.0.0.0:3306->3306/tcp, :::3306->3306/tcp, 33060/tcp   test_flink-mysql-1
 cc500855d225   debezium/postgres:13    "docker-entrypoint.s…"   5 minutes ago   Up 5 minutes   0.0.0.0:5432->5432/tcp, :::5432->5432/tcp              test_flink-postgres_input-1
 ```
-# 3) Entering the container with bash
+## 3) Entering the container with bash
 
 ```bash
 docker exec -it <id_sql_client> /bin/bash
 ```
-# 4) If necessary, we give the right to launch the sql-client
+## 4) If necessary, we give the right to launch the sql-client
 ```bash
 chmod u+x ./sql-client.sh
 ```
-# 5) Start sql-client
+## 5) Start sql-client
 ```bash
 ./sql-client.sh
 ```
-# 6) Execute commands in Scripts.sql with #FlinkSQL
+## 6) Execute commands in Script.sql with #FlinkSQL
