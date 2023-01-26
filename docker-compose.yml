@@ -5,8 +5,8 @@ services:
   postgres_input: 
     image: debezium/postgres:13
     environment: 
-      POSTGRES_PASSWORD: admin
-      POSTGRES_USER: rolan
+      POSTGRES_PASSWORD: *****
+      POSTGRES_USER: *****
       POSTGRES_DB: db01
     ports:
       - "5432:5432"
@@ -16,7 +16,39 @@ services:
     ports:
       - "3306:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: *****
       MYSQL_DATABASE: db02
-      MYSQL_USER: rolan
-      MYSQL_PASSWORD: admin
+      MYSQL_USER: *****
+      MYSQL_PASSWORD: *****
+
+  jobmanager:
+    image: flink:1.16.0
+    ports:
+      - "8081:8081"
+    command: jobmanager
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: jobmanager        
+
+  taskmanager:
+    image: flink:1.16.0
+    depends_on:
+      - jobmanager
+    command: taskmanager
+    scale: 1
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: jobmanager
+        taskmanager.numberOfTaskSlots: 2
+  
+  sql-client:
+    container_name: 'sql-client'
+    build:
+      context: .
+      dockerfile: sql-client/Dockerfile
+    depends_on:
+      - jobmanager
+    environment:
+      FLINK_JOBMANAGER_HOST: jobmanager

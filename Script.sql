@@ -9,7 +9,7 @@ salary int);
 select * from users;
 ----------------------------------
 
-#FLINK
+#FLINKSQL
 
 set execution.checkpointing.interval=3s;
 
@@ -23,8 +23,8 @@ CREATE TABLE users (
    'connector' = 'postgres-cdc',
    'hostname' = 'localhost',
    'port' = '5432',
-   'username' = 'rolan',
-   'password' = 'admin',
+   'username' = '*****',
+   'password' = '*****',
    'database-name' = 'db01',
    'schema-name' = 'public',
    'table-name' = 'users'
@@ -40,8 +40,8 @@ CREATE TABLE usersnotsalary (
    'connector' = 'jdbc',
    'url' = 'jdbc:mysql://localhost:3306/db02',
    'table-name' = 'users',
-   'username'='rolan',
-   'password'='admin'
+   'username'='*****',
+   'password'='*****'
  );
 
 

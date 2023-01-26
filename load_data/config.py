@@ -1,5 +1,5 @@
 host = 'localhost'
-user = "rolan"
-password = 'admin'
+user = "*****"
+password = '*****'
 db_name = 'db01'
 port = 5432
